@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        MIT License
+        
+        Copyright (c) 2025 NQR
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+
+        Third-Party Notices
+        
+        This project bundles the following third-party component. No other third-party code is included.
+        
+        gif.js (v0.2.0)
+        
+        - Files: `/assets/js/vendor/gif.js`, `/assets/js/vendor/gif.worker.js`
+        - Upstream repository: https://github.com/jnordberg/gif.js
+        - Status: Unmodified copy of the upstream distribution.
+        
+        License (MIT) — gif.js
+        
+        Copyright (c) 2013 Johan Nordberg
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zygnul</title>
+
+    <!-- Favicon links -->
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/android-chrome-192x192.png">
+
+    <style>
+        :root {
+            --bg: #0c1020;
+            --card: #151c3b;
+            --ink: #eef1ff;
+            --dim: #b9c6ef;
+            --border: #2b3868;
+            --accent: #1fc9aa;
+            --accent-hover: #18b79a;
+            --accent-dark: #17b399;
+            --input-bg: #0f1432;
+            --warning: #ff6b6b;
+            --success: #51cf66;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--ink);
+        }
+
+        a, a:visited, a:hover, a:active { color: inherit; }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .app-header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          padding: 0px 12px 12px;
+        }
+
+        .app-logo {
+          max-width: 200px; 
+          height: auto;
+          margin: 0;
+          display: block;
+          object-fit: contain;
+        }
+
+        .app-subtitle {
+          color: var(--dim);
+          font-size: 0.9rem;
+          font-style: italic;
+          margin: 0 0 2px 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 30px;
+            font-size: 3em;
+            text-shadow: 0 0 20px rgba(31, 201, 170, 0.5);
+            letter-spacing: 4px;
+        }
+
+        .modules {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .output-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        /* ============================================
+           LICENSE FOOTER
+           ============================================ */
+        .license-footer {
+          margin-top: 30px;
+          margin-bottom: 20px;
+          padding: 10px;
+          font-size: 11px;
+          color: var(--dim);
+          opacity: 0.7;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
+        }
+    
+        .license-footer:hover {
+          opacity: 1;
+        }
+    
+        .license-modal {
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: var(--card);
+          border: 2px solid var(--border);
+          border-radius: 12px;
+          padding: 20px;
+          max-width: 500px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          box-shadow: 0 20px 60px rgba(0,0,0,.6);
+          z-index: 1000;
+        }
+    
+        .license-modal.show {
+          display: block;
+        }
+    
+        .license-modal h3 {
+          margin-top: 0;
+          color: var(--ink);
+        }
+    
+        .license-modal pre {
+          white-space: pre-wrap;
+          font-size: 11px;
+          line-height: 1.5;
+          color: var(--dim);
+        }
+    
+        .license-modal-close {
+          float: right;
+          cursor: pointer;
+          font-size: 24px;
+          color: var(--dim);
+          transition: color 0.2s ease;
+        }
+    
+        .license-modal-close:hover {
+          color: var(--ink);
+        }
+    
+        .license-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          z-index: 999;
+        }
+    
+        .license-overlay.show {
+          display: block;
+        }
+
+        @media (max-width: 1200px) {
+            .output-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .module {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+        }
+
+        .module h2 {
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-size: 1.25em;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+
+        .module h3 {
+            margin: 20px 0 10px 0;
+            color: var(--dim);
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s;
+            background: var(--input-bg);
+            color: var(--ink);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .control-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .control-group {
+            margin: 0;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dim);
+            font-size: 13px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--input-bg);
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border: 1px solid var(--border);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            display: inline-block;
+            margin-left: 8px;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-item label {
+            font-size: 12px;
+            cursor: pointer;
+            margin: 0;
+            font-weight: normal;
+            color: var(--dim);
+        }
+
+        .output-display {
+            background: var(--input-bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            width: 100%;
+            height: 400px;
+            padding: 40px;
+            font-size: 24px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .output-display.paint-mode {
+            cursor: crosshair;
+        }
+
+        .output-display.transparent {
+            background: repeating-conic-gradient(#80808020 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+        }
+
+        .output-text {
+            width: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 201, 170, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: var(--dim);
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.5;
+        }
+
+        .color-controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .color-control {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .color-control label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--dim);
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 35px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            background: var(--input-bg);
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 6px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            background: var(--input-bg);
+            color: var(--dim);
+        }
+
+        input[type="file"]::-webkit-file-upload-button {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            background: var(--accent);
+            color: var(--bg);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            background: var(--input-bg);
+            color: var(--ink);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .canvas-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--input-bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            min-height: 400px;
+        }
+
+        .canvas-container.transparent {
+            background: repeating-conic-gradient(#80808020 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+        }
+
+        .animated-canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .status.success {
+            background: var(--success);
+            color: var(--bg);
+            display: block;
+        }
+
+        .status.error {
+            background: var(--warning);
+            color: var(--bg);
+            display: block;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        .paint-mode-hint {
+            font-size: 12px;
+            color: var(--warning);
+            margin-top: 10px;
+            display: none;
+        }
+
+        .paint-mode-hint.active {
+            display: block;
+        }
+    </style>
+    <script src="./assets/js/vendor/gif.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <img src="assets/images/logo.png" alt="Zygnul Logo" class="app-logo">
+            <p class="app-subtitle">A glitch text generator by NQR</p>
+        </header>
+        
+        <div class="modules">
+            <!-- Module 1: Input & Controls (Full Width) -->
+            <div class="module">
+                <h2>Input & Controls</h2>
+                
+                <h3>Text Input</h3>
+                <textarea id="inputText" placeholder="Enter your text here...">Zygnul</textarea>
+                
+                <h3>Settings</h3>
+                
+                <div class="control-row">
+                    <div class="control-group">
+                        <label>Font Size <span class="slider-value" id="fontSizeValue">24</span>px</label>
+                        <input type="range" id="fontSizeSlider" min="12" max="180" value="24">
+                    </div>
+                    <div class="control-group">
+                        <label>Glitch Intensity <span class="slider-value" id="intensityValue">50</span></label>
+                        <input type="range" id="intensitySlider" min="0" max="100" value="50">
+                    </div>
+                </div>
+                
+                <div class="control-row">
+                    <div class="control-group">
+                        <label>Glitch Distribution <span class="slider-value" id="distributionValue">50</span></label>
+                        <input type="range" id="distributionSlider" min="0" max="100" value="50">
+                    </div>
+                    <div class="control-group">
+                        <label>Animation Speed <span class="slider-value" id="speedValue">5</span></label>
+                        <input type="range" id="speedSlider" min="1" max="10" value="5">
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-group">
+                        <label>Font Family</label>
+                        <select id="fontSelect">
+                            <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="'Times New Roman', serif">Times New Roman</option>
+                            <option value="'Courier New', monospace">Courier New</option>
+                            <option value="Georgia, serif">Georgia</option>
+                            <option value="Verdana, sans-serif">Verdana</option>
+                            <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                            <option value="Impact, sans-serif">Impact</option>
+                            <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                            <option value="'Lucida Console', monospace">Lucida Console</option>
+                            <option value="CustomFont">Custom Font (Upload)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Custom Font File</label>
+                        <input type="file" id="fontUpload" accept=".ttf,.otf,.woff,.woff2" disabled>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Glitch Types</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="zalgoUp" checked>
+                            <label for="zalgoUp">Up Marks</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="zalgoDown" checked>
+                            <label for="zalgoDown">Down Marks</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="zalgoMid" checked>
+                            <label for="zalgoMid">Mid Marks</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="mathSymbols">
+                            <label for="mathSymbols">Math</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="greekSymbols">
+                            <label for="greekSymbols">Greek</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="arabicSymbols">
+                            <label for="arabicSymbols">Arabic</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="leetSpeak">
+                            <label for="leetSpeak">L33t</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="mirrorText">
+                            <label for="mirrorText">Mirror</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="upsideDown">
+                            <label for="upsideDown">Upside Down</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="paintMode">
+                            <label for="paintMode">Paint Mode</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="color-controls">
+                    <div class="color-control">
+                        <label>Text Grad Start</label>
+                        <input type="color" id="textGradientStart" value="#ff0080">
+                    </div>
+                    <div class="color-control">
+                        <label>Text Grad End</label>
+                        <input type="color" id="textGradientEnd" value="#00ffff">
+                    </div>
+                    <div class="color-control">
+                        <label>BG Grad Start</label>
+                        <input type="color" id="bgGradientStart" value="#0f1432">
+                    </div>
+                    <div class="color-control">
+                        <label>BG Grad End</label>
+                        <input type="color" id="bgGradientEnd" value="#1a1f45">
+                    </div>
+                </div>
+                
+                <div class="control-row" style="margin-top: 10px;">
+                    <div class="control-group">
+                        <label>Text Effect</label>
+                        <select id="textEffect">
+                            <option value="none">None</option>
+                            <option value="gradient">Gradient</option>
+                            <option value="shadow">Shadow</option>
+                            <option value="glow">Glow</option>
+                            <option value="rainbow">Rainbow</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Background Effect</label>
+                        <select id="bgEffect">
+                            <option value="solid">Solid</option>
+                            <option value="gradient">Gradient</option>
+                            <option value="rainbow">Rainbow</option>
+                            <option value="transparent">Transparent</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modules 2 & 3: Outputs Side by Side -->
+            <div class="output-row">
+                <!-- Module 2: Static Output -->
+                <div class="module">
+                    <h2>Static Output</h2>
+                    
+                    <div id="staticOutput" class="output-display">
+                        <div class="output-text" id="outputText"></div>
+                    </div>
+                    <div class="paint-mode-hint">Click and drag over text to paint glitches</div>
+                    
+                    <div class="button-group">
+                        <button id="copyBtn">Copy Text</button>
+                        <button id="saveImageBtn">Save Image</button>
+                    </div>
+                    
+                    <div id="staticStatus" class="status"></div>
+                </div>
+
+                <!-- Module 3: Animated Output -->
+                <div class="module">
+                    <h2>Animated Output</h2>
+                    
+                    <div id="canvasContainer" class="canvas-container">
+                        <canvas id="animatedCanvas" class="animated-canvas" width="720" height="360"></canvas>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="saveGifBtn">Save as GIF</button>
+                        <button id="saveWebmBtn">Save as WebM</button>
+                    </div>
+                    
+                    <div id="animatedStatus" class="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- License Footer -->
+    <div class="license-footer" id="licenseLink" style="text-align:center;">
+        © 2025 NQR • Licensed under MIT • Click for details
+    </div>
+
+    <!-- License Modal -->
+    <div class="license-overlay" id="licenseOverlay"></div>
+    <div class="license-modal" id="licenseModal">
+        <span class="license-modal-close" id="licenseClose">&times;</span>
+        <h3 style="text-align:center;">MIT License</h3>
+        <pre>Copyright (c) 2025 NQR
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+<strong>Third-Party Notices</strong>
+
+This project bundles the following third-party component. No other third-party code is included.
+
+gif.js (v0.2.0)
+
+- Files: <a href="https://nqrlabs.com/Zygnul/assets/js/vendor/gif.js" target="_blank">/assets/js/vendor/gif.js</a>, <a href="https://nqrlabs.com/Zygnul/assets/js/vendor/gif.worker.js" target="_blank">/assets/js/vendor/gif.worker.js</a>
+- Upstream repository: <a href="https://github.com/jnordberg/gif.js" target="_blank">https://github.com/jnordberg/gif.js</a>
+- Status: Unmodified copy of the upstream distribution.
+- gif.js license: See <a href="https://nqrlabs.com/Zygnul/assets/js/vendor/THIRD_PARTY_NOTICES.md" target="_blank">/assets/js/vendor/THIRD_PARTY_NOTICES.md</a>
+
+        </pre>
+    </div>
+
+    <!-- License and Tips Modal Handler Script - Must be after the HTML elements -->
+    <script>
+        (function(){
+          const licenseLink = document.getElementById('licenseLink');
+          const licenseModal = document.getElementById('licenseModal');
+          const licenseOverlay = document.getElementById('licenseOverlay');
+          const licenseClose = document.getElementById('licenseClose');
+  
+          if(!licenseLink || !licenseModal || !licenseOverlay || !licenseClose) return;
+  
+          function showLicense() {
+            licenseModal.classList.add('show');
+            licenseOverlay.classList.add('show');
+          }
+  
+          function hideLicense() {
+            licenseModal.classList.remove('show');
+            licenseOverlay.classList.remove('show');
+          }
+  
+          licenseLink.addEventListener('click', showLicense);
+          licenseClose.addEventListener('click', hideLicense);
+          licenseOverlay.addEventListener('click', hideLicense);
+        })();
+
+        // Unicode combining marks for zalgo text
+        const zalgoMarks = {
+            up: [
+                '\u030d', '\u030e', '\u0304', '\u0305', '\u033f', '\u0311', '\u0306', '\u0310',
+                '\u0352', '\u0357', '\u0351', '\u0307', '\u0308', '\u030a', '\u0342', '\u0343',
+                '\u0344', '\u034a', '\u034b', '\u034c', '\u0303', '\u0302', '\u030c', '\u0350',
+                '\u0300', '\u0301', '\u030b', '\u030f', '\u0312'
+            ],
+            mid: [
+                '\u0315', '\u031b', '\u0340', '\u0341', '\u0358', '\u0321', '\u0322', '\u0327',
+                '\u0328', '\u0334', '\u0335', '\u0336', '\u034f', '\u035c', '\u035d', '\u035e',
+                '\u035f', '\u0360', '\u0362', '\u0338', '\u0337', '\u0361', '\u0489'
+            ],
+            down: [
+                '\u0316', '\u0317', '\u0318', '\u0319', '\u031c', '\u031d', '\u031e', '\u031f',
+                '\u0320', '\u0324', '\u0325', '\u0326', '\u0329', '\u032a', '\u032b', '\u032c',
+                '\u032d', '\u032e', '\u032f', '\u0330', '\u0331', '\u0332', '\u0333', '\u0339',
+                '\u033a', '\u033b', '\u033c', '\u0345', '\u0347', '\u0348', '\u0349', '\u034d',
+                '\u034e', '\u0353', '\u0354', '\u0355', '\u0356', '\u0359', '\u035a', '\u0323'
+            ]
+        };
+
+        const leetVariants = {
+            'a': ['4', '@', 'a'],
+            'A': ['4', '@', 'A'],
+            'e': ['3', 'e'],
+            'E': ['3', 'E'],
+            'i': ['1', '!', 'i'],
+            'I': ['1', '!', 'I'],
+            'o': ['0', 'o'],
+            'O': ['0', 'O'],
+            's': ['5', '$', 's'],
+            'S': ['5', '$', 'S'],
+            't': ['7', '+', 't'],
+            'T': ['7', '+', 'T'],
+            'l': ['1', '|', 'l'],
+            'L': ['1', '|', 'L'],
+            'g': ['9', 'g'],
+            'G': ['9', 'G']
+        };
+
+        const mirrorMap = {
+            'a': 'ɐ', 'b': 'q', 'c': 'ɔ', 'd': 'p', 'e': 'ǝ', 'f': 'ɟ', 'g': 'ƃ',
+            'h': 'ɥ', 'i': 'ᴉ', 'j': 'ɾ', 'k': 'ʞ', 'l': 'ʃ', 'm': 'ɯ', 'n': 'u',
+            'p': 'd', 'q': 'b', 'r': 'ɹ', 't': 'ʇ', 'u': 'n', 'v': 'ʌ', 'w': 'ʍ',
+            'y': 'ʎ', 'A': '∀', 'B': 'ᙠ', 'C': 'Ɔ', 'D': 'ᗡ', 'E': 'Ǝ', 'F': 'Ⅎ',
+            'G': '⅁', 'H': 'H', 'I': 'I', 'J': 'ſ', 'K': 'ʞ', 'L': '⅂', 'M': 'W',
+            'N': 'N', 'P': 'Ԁ', 'Q': 'Ὸ', 'R': 'ᴚ', 'T': '⊥', 'U': '∩', 'V': 'Λ',
+            'W': 'M', 'Y': '⅄'
+        };
+
+        const upsideDownMap = {
+            'a': 'ɐ', 'b': 'q', 'c': 'ɔ', 'd': 'p', 'e': 'ǝ', 'f': 'ɟ', 'g': 'ƃ',
+            'h': 'ɥ', 'i': 'ᴉ', 'j': 'ɾ', 'k': 'ʞ', 'l': 'ʃ', 'm': 'ɯ', 'n': 'u',
+            'o': 'o', 'p': 'd', 'q': 'b', 'r': 'ɹ', 's': 's', 't': 'ʇ', 'u': 'n',
+            'v': 'ʌ', 'w': 'ʍ', 'x': 'x', 'y': 'ʎ', 'z': 'z',
+            '?': '¿', '!': '¡', '.': '˙', ',': '\'', '\'': ',', '"': '„'
+        };
+
+        // State
+        let currentGlitchedText = '';
+        let animationFrameId = null;
+        let isAnimating = false;
+        let animationFrameCache = [];
+        let currentFrameIndex = 0;
+        const CACHE_SIZE = 30;
+        
+        let updateTimeout = null;
+        const DEBOUNCE_DELAY = 50;
+
+        let paintModeGlitches = new Set();
+        let isMouseDown = false;
+        let customFontLoaded = false;
+        let currentFontFamily = "'Segoe UI', sans-serif";
+
+        // Get DOM elements
+        const inputText = document.getElementById('inputText');
+        const staticOutput = document.getElementById('staticOutput');
+        const outputText = document.getElementById('outputText');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const animatedCanvas = document.getElementById('animatedCanvas');
+        const ctx = animatedCanvas.getContext('2d');
+
+        const fontSizeSlider = document.getElementById('fontSizeSlider');
+        const intensitySlider = document.getElementById('intensitySlider');
+        const distributionSlider = document.getElementById('distributionSlider');
+        const speedSlider = document.getElementById('speedSlider');
+        const fontSelect = document.getElementById('fontSelect');
+        const fontUpload = document.getElementById('fontUpload');
+
+        const zalgoUpCheck = document.getElementById('zalgoUp');
+        const zalgoDownCheck = document.getElementById('zalgoDown');
+        const zalgoMidCheck = document.getElementById('zalgoMid');
+        const mathSymbolsCheck = document.getElementById('mathSymbols');
+        const greekSymbolsCheck = document.getElementById('greekSymbols');
+        const arabicSymbolsCheck = document.getElementById('arabicSymbols');
+        const leetSpeakCheck = document.getElementById('leetSpeak');
+        const mirrorTextCheck = document.getElementById('mirrorText');
+        const upsideDownCheck = document.getElementById('upsideDown');
+        const paintModeCheck = document.getElementById('paintMode');
+
+        const textGradientStartInput = document.getElementById('textGradientStart');
+        const textGradientEndInput = document.getElementById('textGradientEnd');
+        const bgGradientStartInput = document.getElementById('bgGradientStart');
+        const bgGradientEndInput = document.getElementById('bgGradientEnd');
+        const textEffectSelect = document.getElementById('textEffect');
+        const bgEffectSelect = document.getElementById('bgEffect');
+
+        const paintModeHint = document.querySelector('.paint-mode-hint');
+
+        // Font handling
+        fontSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'CustomFont') {
+                fontUpload.disabled = false;
+            } else {
+                fontUpload.disabled = true;
+                currentFontFamily = e.target.value;
+                updateFontFamily();
+            }
+        });
+
+        fontUpload.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const fontFace = new FontFace('CustomFont', arrayBuffer);
+                await fontFace.load();
+                document.fonts.add(fontFace);
+                
+                currentFontFamily = 'CustomFont, sans-serif';
+                customFontLoaded = true;
+                updateFontFamily();
+                showStatus('staticStatus', 'Custom font loaded!', 'success');
+            } catch (err) {
+                console.error('Font loading error:', err);
+                showStatus('staticStatus', 'Failed to load font', 'error');
+            }
+        });
+
+        function updateFontFamily() {
+            inputText.style.fontFamily = currentFontFamily;
+            updateStaticOutput();
+        }
+
+        // Core glitch generation function
+        function generateGlitch(text, options = {}) {
+            if (!text) return '';
+
+            const {
+                intensity = 50,
+                distribution = 50,
+                zalgoUp = true,
+                zalgoDown = true,
+                zalgoMid = true,
+                mathSymbols = false,
+                greekSymbols = false,
+                arabicSymbols = false,
+                leetSpeak = false,
+                mirrorText = false,
+                upsideDown = false,
+                charIndices = null
+            } = options;
+
+            let chars = text.split('');
+
+            if (leetSpeak) {
+                chars = chars.map((char, idx) => {
+                    if (charIndices && !charIndices.has(idx)) return char;
+                    const variants = leetVariants[char];
+                    if (variants && Math.random() < 0.6) {
+                        return variants[Math.floor(Math.random() * variants.length)];
+                    }
+                    return char;
+                });
+            }
+
+            if (mirrorText) {
+                chars = chars.map((char, idx) => {
+                    if (charIndices && !charIndices.has(idx)) return char;
+                    return mirrorMap[char] || char;
+                });
+            }
+
+            if (upsideDown) {
+                if (charIndices) {
+                    chars = chars.map((char, idx) => {
+                        return charIndices.has(idx) ? (upsideDownMap[char] || char) : char;
+                    });
+                } else {
+                    chars = chars.map(char => upsideDownMap[char] || char).reverse();
+                }
+            }
+
+            if (mathSymbols) {
+                const mathMap = '∂∆∑∞≈≠±×÷√∫';
+                const threshold = distribution / 300;
+                chars = chars.map((char, idx) => {
+                    if (charIndices && !charIndices.has(idx)) return char;
+                    if (/[a-zA-Z]/.test(char) && Math.random() < threshold) {
+                        return mathMap[Math.floor(Math.random() * mathMap.length)];
+                    }
+                    return char;
+                });
+            }
+
+            if (greekSymbols) {
+                const greekLower = 'αβγδεθλμπσφψω';
+                const greekUpper = 'ΑΒΓΔΕΘΛΜΠΣΦΨΩ';
+                const threshold = distribution / 300;
+                chars = chars.map((char, idx) => {
+                    if (charIndices && !charIndices.has(idx)) return char;
+                    if (Math.random() < threshold) {
+                        if (/[a-z]/.test(char)) {
+                            return greekLower[Math.floor(Math.random() * greekLower.length)];
+                        } else if (/[A-Z]/.test(char)) {
+                            return greekUpper[Math.floor(Math.random() * greekUpper.length)];
+                        }
+                    }
+                    return char;
+                });
+            }
+
+            if (arabicSymbols) {
+                const arabicChars = 'ابتجحدرسشعفقلمنهو';
+                const threshold = distribution / 300;
+                chars = chars.map((char, idx) => {
+                    if (charIndices && !charIndices.has(idx)) return char;
+                    if (/[a-zA-Z]/.test(char) && Math.random() < threshold) {
+                        return arabicChars[Math.floor(Math.random() * arabicChars.length)];
+                    }
+                    return char;
+                });
+            }
+
+            const marksPerChar = Math.floor(intensity / 10);
+            const applyProbability = distribution / 100;
+            
+            const categories = [];
+            if (zalgoUp) categories.push(zalgoMarks.up);
+            if (zalgoMid) categories.push(zalgoMarks.mid);
+            if (zalgoDown) categories.push(zalgoMarks.down);
+            
+            if (categories.length > 0) {
+                const catLen = categories.length;
+                
+                for (let i = 0; i < chars.length; i++) {
+                    if (charIndices && !charIndices.has(i)) continue;
+                    if (Math.random() > applyProbability) continue;
+                    
+                    const numMarks = Math.floor(Math.random() * marksPerChar) + 1;
+                    let marks = '';
+                    
+                    for (let j = 0; j < numMarks; j++) {
+                        const category = categories[Math.floor(Math.random() * catLen)];
+                        marks += category[Math.floor(Math.random() * category.length)];
+                    }
+                    
+                    chars[i] += marks;
+                }
+            }
+
+            return chars.join('');
+        }
+
+        function regenerateFrameCache() {
+            const text = inputText.value;
+            const options = getOptions();
+            
+            if (options.paintMode && paintModeGlitches.size > 0) {
+                options.charIndices = paintModeGlitches;
+            }
+            
+            animationFrameCache = [];
+            for (let i = 0; i < CACHE_SIZE; i++) {
+                animationFrameCache.push(generateGlitch(text, options));
+            }
+            currentFrameIndex = 0;
+        }
+
+        function getOptions() {
+            return {
+                intensity: parseInt(intensitySlider.value),
+                distribution: parseInt(distributionSlider.value),
+                zalgoUp: zalgoUpCheck.checked,
+                zalgoDown: zalgoDownCheck.checked,
+                zalgoMid: zalgoMidCheck.checked,
+                mathSymbols: mathSymbolsCheck.checked,
+                greekSymbols: greekSymbolsCheck.checked,
+                arabicSymbols: arabicSymbolsCheck.checked,
+                leetSpeak: leetSpeakCheck.checked,
+                mirrorText: mirrorTextCheck.checked,
+                upsideDown: upsideDownCheck.checked,
+                paintMode: paintModeCheck.checked
+            };
+        }
+
+        function applyBackgroundStyling(element, isCanvas = false, canvasCtx = null) {
+            const bgEffect = bgEffectSelect.value;
+            const bgStart = bgGradientStartInput.value;
+            const bgEnd = bgGradientEndInput.value;
+
+            if (bgEffect === 'transparent') {
+                if (!isCanvas) {
+                    element.classList.add('transparent');
+                } else {
+                    canvasContainer.classList.add('transparent');
+                }
+                return;
+            } else {
+                if (!isCanvas) {
+                    element.classList.remove('transparent');
+                } else {
+                    canvasContainer.classList.remove('transparent');
+                }
+            }
+
+            if (isCanvas && canvasCtx) {
+                if (bgEffect === 'gradient') {
+                    const gradient = canvasCtx.createLinearGradient(0, 0, animatedCanvas.width, animatedCanvas.height);
+                    gradient.addColorStop(0, bgStart);
+                    gradient.addColorStop(1, bgEnd);
+                    canvasCtx.fillStyle = gradient;
+                } else if (bgEffect === 'rainbow') {
+                    const gradient = canvasCtx.createLinearGradient(0, 0, animatedCanvas.width, animatedCanvas.height);
+                    gradient.addColorStop(0, 'red');
+                    gradient.addColorStop(0.17, 'orange');
+                    gradient.addColorStop(0.33, 'yellow');
+                    gradient.addColorStop(0.5, 'green');
+                    gradient.addColorStop(0.67, 'blue');
+                    gradient.addColorStop(0.83, 'indigo');
+                    gradient.addColorStop(1, 'violet');
+                    canvasCtx.fillStyle = gradient;
+                } else {
+                    canvasCtx.fillStyle = bgStart;
+                }
+            } else {
+                if (bgEffect === 'gradient') {
+                    element.style.background = `linear-gradient(135deg, ${bgStart}, ${bgEnd})`;
+                } else if (bgEffect === 'rainbow') {
+                    element.style.background = 'linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet)';
+                } else {
+                    element.style.background = bgStart;
+                }
+            }
+        }
+
+        function applyTextStyling(element, isCanvas = false, canvasCtx = null) {
+            const effect = textEffectSelect.value;
+            const textGradStart = textGradientStartInput.value;
+            const textGradEnd = textGradientEndInput.value;
+            const fontSize = parseInt(fontSizeSlider.value);
+
+            if (isCanvas && canvasCtx) {
+                canvasCtx.font = `${fontSize}px ${currentFontFamily}`;
+                canvasCtx.textAlign = 'center';
+                canvasCtx.textBaseline = 'middle';
+
+                if (effect === 'gradient') {
+                    const gradient = canvasCtx.createLinearGradient(0, 0, animatedCanvas.width, 0);
+                    gradient.addColorStop(0, textGradStart);
+                    gradient.addColorStop(1, textGradEnd);
+                    canvasCtx.fillStyle = gradient;
+                } else if (effect === 'shadow') {
+                    canvasCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                    canvasCtx.shadowColor = textGradStart;
+                    canvasCtx.shadowBlur = 10;
+                    canvasCtx.shadowOffsetX = 3;
+                    canvasCtx.shadowOffsetY = 3;
+                } else if (effect === 'glow') {
+                    canvasCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                    canvasCtx.shadowColor = textGradStart;
+                    canvasCtx.shadowBlur = 20;
+                } else if (effect === 'rainbow') {
+                    const gradient = canvasCtx.createLinearGradient(0, 0, animatedCanvas.width, 0);
+                    gradient.addColorStop(0, 'red');
+                    gradient.addColorStop(0.17, 'orange');
+                    gradient.addColorStop(0.33, 'yellow');
+                    gradient.addColorStop(0.5, 'green');
+                    gradient.addColorStop(0.67, 'blue');
+                    gradient.addColorStop(0.83, 'indigo');
+                    gradient.addColorStop(1, 'violet');
+                    canvasCtx.fillStyle = gradient;
+                } else {
+                    canvasCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                }
+            } else {
+                element.style.fontSize = fontSize + 'px';
+                element.style.fontFamily = currentFontFamily;
+
+                if (effect === 'gradient') {
+                    element.style.background = `linear-gradient(135deg, ${textGradStart}, ${textGradEnd})`;
+                    element.style.webkitBackgroundClip = 'text';
+                    element.style.webkitTextFillColor = 'transparent';
+                    element.style.backgroundClip = 'text';
+                    element.style.textShadow = 'none';
+                    element.style.color = 'transparent';
+                } else if (effect === 'shadow') {
+                    element.style.color = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                    element.style.textShadow = `2px 2px 4px ${textGradStart}, -2px -2px 4px ${textGradEnd}`;
+                    element.style.webkitTextFillColor = 'initial';
+                    element.style.backgroundClip = 'initial';
+                    element.style.background = 'none';
+                } else if (effect === 'glow') {
+                    element.style.color = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                    element.style.textShadow = `0 0 10px ${textGradStart}, 0 0 20px ${textGradEnd}`;
+                    element.style.webkitTextFillColor = 'initial';
+                    element.style.backgroundClip = 'initial';
+                    element.style.background = 'none';
+                } else if (effect === 'rainbow') {
+                    element.style.background = 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)';
+                    element.style.webkitBackgroundClip = 'text';
+                    element.style.webkitTextFillColor = 'transparent';
+                    element.style.backgroundClip = 'text';
+                    element.style.textShadow = 'none';
+                    element.style.color = 'transparent';
+                } else {
+                    element.style.color = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                    element.style.textShadow = 'none';
+                    element.style.webkitTextFillColor = 'initial';
+                    element.style.backgroundClip = 'initial';
+                    element.style.background = 'none';
+                }
+            }
+        }
+
+        function getCharIndexAtPosition(x, y) {
+            const text = outputText.textContent;
+            if (!text) return -1;
+            
+            const rect = outputText.getBoundingClientRect();
+            const relX = x - rect.left;
+            const relY = y - rect.top;
+            
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            const fontSize = parseInt(fontSizeSlider.value);
+            tempCtx.font = `${fontSize}px ${currentFontFamily}`;
+            
+            const containerWidth = staticOutput.offsetWidth - 80;
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
+            
+            for (let word of words) {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const metrics = tempCtx.measureText(testLine);
+                
+                if (metrics.width > containerWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            if (currentLine) lines.push(currentLine);
+            
+            const lineHeight = fontSize * 1.6;
+            const lineIndex = Math.floor(relY / lineHeight);
+            
+            if (lineIndex < 0 || lineIndex >= lines.length) return -1;
+            
+            const line = lines[lineIndex];
+            let charIndex = 0;
+            
+            for (let i = 0; i < lineIndex; i++) {
+                charIndex += lines[i].length + 1;
+            }
+            
+            let accumulatedWidth = 0;
+            const centerOffset = (rect.width - tempCtx.measureText(line).width) / 2;
+            
+            for (let i = 0; i < line.length; i++) {
+                const charWidth = tempCtx.measureText(line[i]).width;
+                if (relX >= centerOffset + accumulatedWidth && relX < centerOffset + accumulatedWidth + charWidth) {
+                    return charIndex + i;
+                }
+                accumulatedWidth += charWidth;
+            }
+            
+            return charIndex + line.length - 1;
+        }
+
+        staticOutput.addEventListener('mousedown', (e) => {
+            if (!paintModeCheck.checked) return;
+            isMouseDown = true;
+            const idx = getCharIndexAtPosition(e.clientX, e.clientY);
+            if (idx >= 0) {
+                paintModeGlitches.add(idx);
+                updateStaticOutput();
+            }
+        });
+
+        staticOutput.addEventListener('mousemove', (e) => {
+            if (!paintModeCheck.checked || !isMouseDown) return;
+            const idx = getCharIndexAtPosition(e.clientX, e.clientY);
+            if (idx >= 0) {
+                paintModeGlitches.add(idx);
+                updateStaticOutput();
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isMouseDown = false;
+        });
+
+        function updateStaticOutput() {
+            const text = inputText.value;
+            const options = getOptions();
+            
+            if (options.paintMode) {
+                if (paintModeGlitches.size === 0) {
+                    outputText.textContent = text;
+                } else {
+                    currentGlitchedText = generateGlitch(text, {
+                        ...options,
+                        charIndices: paintModeGlitches
+                    });
+                    outputText.textContent = currentGlitchedText;
+                }
+                staticOutput.classList.add('paint-mode');
+                paintModeHint.classList.add('active');
+            } else {
+                currentGlitchedText = generateGlitch(text, options);
+                outputText.textContent = currentGlitchedText;
+                staticOutput.classList.remove('paint-mode');
+                paintModeHint.classList.remove('active');
+                paintModeGlitches.clear();
+            }
+            
+            applyBackgroundStyling(staticOutput);
+            applyTextStyling(outputText);
+            
+            regenerateFrameCache();
+        }
+        
+        function debouncedUpdateStaticOutput() {
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(updateStaticOutput, DEBOUNCE_DELAY);
+        }
+
+        let lastFrameTime = 0;
+        
+        function getFrameDelay() {
+            const speed = parseInt(speedSlider.value);
+            return 550 - (speed * 50);
+        }
+
+        function animateCanvas(timestamp) {
+            if (!isAnimating) return;
+
+            const targetDelay = getFrameDelay();
+            
+            if (timestamp - lastFrameTime < targetDelay) {
+                animationFrameId = requestAnimationFrame(animateCanvas);
+                return;
+            }
+
+            lastFrameTime = timestamp;
+
+            if (animationFrameCache.length === 0) {
+                regenerateFrameCache();
+            }
+            
+            currentFrameIndex = (currentFrameIndex + 1) % animationFrameCache.length;
+            const glitchedText = animationFrameCache[currentFrameIndex];
+            
+            ctx.clearRect(0, 0, animatedCanvas.width, animatedCanvas.height);
+            
+            const bgEffect = bgEffectSelect.value;
+            if (bgEffect !== 'transparent') {
+                applyBackgroundStyling(null, true, ctx);
+                ctx.fillRect(0, 0, animatedCanvas.width, animatedCanvas.height);
+            }
+            
+            applyTextStyling(null, true, ctx);
+            
+            const fontSize = parseInt(fontSizeSlider.value);
+            const margin = 40;
+            const maxWidth = animatedCanvas.width - (margin * 2);
+            const words = glitchedText.split(' ');
+            const lines = [];
+            let currentLine = '';
+            
+            for (let word of words) {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const metrics = ctx.measureText(testLine);
+                
+                if (metrics.width > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+            
+            const lineHeight = fontSize * 1.4;
+            const totalHeight = lines.length * lineHeight;
+            let y = (animatedCanvas.height - totalHeight) / 2 + fontSize;
+            
+            for (let line of lines) {
+                ctx.fillText(line, animatedCanvas.width / 2, y);
+                y += lineHeight;
+            }
+            
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+            animationFrameId = requestAnimationFrame(animateCanvas);
+        }
+
+        function startAnimation() {
+            if (!isAnimating) {
+                isAnimating = true;
+                lastFrameTime = 0;
+                animationFrameId = requestAnimationFrame(animateCanvas);
+            }
+        }
+
+        function stopAnimation() {
+            isAnimating = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        document.getElementById('copyBtn').addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(currentGlitchedText);
+                showStatus('staticStatus', 'Text copied to clipboard!', 'success');
+            } catch (err) {
+                showStatus('staticStatus', 'Failed to copy text', 'error');
+            }
+        });
+
+        document.getElementById('saveImageBtn').addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = animatedCanvas.width;
+            canvas.height = animatedCanvas.height;
+            
+            const bgEffect = bgEffectSelect.value;
+            if (bgEffect !== 'transparent') {
+                applyBackgroundStyling(null, true, ctx);
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            const fontSize = parseInt(fontSizeSlider.value);
+            ctx.font = `${fontSize}px ${currentFontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const effect = textEffectSelect.value;
+            const textGradStart = textGradientStartInput.value;
+            const textGradEnd = textGradientEndInput.value;
+            
+            if (effect === 'gradient') {
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+                gradient.addColorStop(0, textGradStart);
+                gradient.addColorStop(1, textGradEnd);
+                ctx.fillStyle = gradient;
+            } else if (effect === 'shadow') {
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                ctx.shadowColor = textGradStart;
+                ctx.shadowBlur = 10;
+                ctx.shadowOffsetX = 3;
+                ctx.shadowOffsetY = 3;
+            } else if (effect === 'glow') {
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                ctx.shadowColor = textGradStart;
+                ctx.shadowBlur = 20;
+            } else if (effect === 'rainbow') {
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+                gradient.addColorStop(0, 'red');
+                gradient.addColorStop(0.17, 'orange');
+                gradient.addColorStop(0.33, 'yellow');
+                gradient.addColorStop(0.5, 'green');
+                gradient.addColorStop(0.67, 'blue');
+                gradient.addColorStop(0.83, 'indigo');
+                gradient.addColorStop(1, 'violet');
+                ctx.fillStyle = gradient;
+            } else {
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+            }
+            
+            const margin = 40;
+            const maxWidth = canvas.width - (margin * 2);
+            const words = currentGlitchedText.split(' ');
+            const lines = [];
+            let currentLine = '';
+            
+            for (let word of words) {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const metrics = ctx.measureText(testLine);
+                
+                if (metrics.width > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+            
+            const lineHeight = fontSize * 1.4;
+            const totalHeight = lines.length * lineHeight;
+            let y = (canvas.height - totalHeight) / 2 + fontSize;
+            
+            for (let line of lines) {
+                ctx.fillText(line, canvas.width / 2, y);
+                y += lineHeight;
+            }
+            
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'zygnul-glitch.png';
+                a.click();
+                URL.revokeObjectURL(url);
+                showStatus('staticStatus', 'Image saved!', 'success');
+            });
+        });
+
+        function loadGifJs() {
+            return new Promise((resolve, reject) => {
+                if (typeof GIF !== 'undefined') {
+                    resolve();
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        document.getElementById('saveGifBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('saveGifBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Generating GIF...';
+            
+            try {
+                await loadGifJs();
+                
+                const gif = new GIF({
+                    workers: 2,
+                    quality: 10,
+                    width: animatedCanvas.width,
+                    height: animatedCanvas.height,
+                    //workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js',
+                    workerScript: './assets/js/vendor/gif.worker.js',
+                    transparent: bgEffectSelect.value === 'transparent' ? 0x000000 : null
+                });
+                
+                const numFrames = 30;
+                const frameDelay = getFrameDelay();
+                
+                for (let i = 0; i < numFrames; i++) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = animatedCanvas.width;
+                    canvas.height = animatedCanvas.height;
+                    const tempCtx = canvas.getContext('2d');
+                    
+                    const glitchedText = animationFrameCache[i % animationFrameCache.length];
+                    
+                    const bgEffect = bgEffectSelect.value;
+                    if (bgEffect !== 'transparent') {
+                        applyBackgroundStyling(null, true, tempCtx);
+                        tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                    
+                    const fontSize = parseInt(fontSizeSlider.value);
+                    tempCtx.font = `${fontSize}px ${currentFontFamily}`;
+                    tempCtx.textAlign = 'center';
+                    tempCtx.textBaseline = 'middle';
+                    
+                    const effect = textEffectSelect.value;
+                    const textGradStart = textGradientStartInput.value;
+                    const textGradEnd = textGradientEndInput.value;
+                    
+                    if (effect === 'gradient') {
+                        const gradient = tempCtx.createLinearGradient(0, 0, canvas.width, 0);
+                        gradient.addColorStop(0, textGradStart);
+                        gradient.addColorStop(1, textGradEnd);
+                        tempCtx.fillStyle = gradient;
+                    } else if (effect === 'shadow') {
+                        tempCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                        tempCtx.shadowColor = textGradStart;
+                        tempCtx.shadowBlur = 10;
+                        tempCtx.shadowOffsetX = 3;
+                        tempCtx.shadowOffsetY = 3;
+                    } else if (effect === 'glow') {
+                        tempCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                        tempCtx.shadowColor = textGradStart;
+                        tempCtx.shadowBlur = 20;
+                    } else if (effect === 'rainbow') {
+                        const gradient = tempCtx.createLinearGradient(0, 0, canvas.width, 0);
+                        gradient.addColorStop(0, 'red');
+                        gradient.addColorStop(0.17, 'orange');
+                        gradient.addColorStop(0.33, 'yellow');
+                        gradient.addColorStop(0.5, 'green');
+                        gradient.addColorStop(0.67, 'blue');
+                        gradient.addColorStop(0.83, 'indigo');
+                        gradient.addColorStop(1, 'violet');
+                        tempCtx.fillStyle = gradient;
+                    } else {
+                        tempCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+                    }
+                    
+                    const margin = 40;
+                    const maxWidth = canvas.width - (margin * 2);
+                    const words = glitchedText.split(' ');
+                    const lines = [];
+                    let currentLine = '';
+                    
+                    for (let word of words) {
+                        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                        const metrics = tempCtx.measureText(testLine);
+                        
+                        if (metrics.width > maxWidth && currentLine) {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                    if (currentLine) {
+                        lines.push(currentLine);
+                    }
+                    
+                    const lineHeight = fontSize * 1.4;
+                    const totalHeight = lines.length * lineHeight;
+                    let y = (canvas.height - totalHeight) / 2 + fontSize;
+                    
+                    for (let line of lines) {
+                        tempCtx.fillText(line, canvas.width / 2, y);
+                        y += lineHeight;
+                    }
+                    
+                    gif.addFrame(canvas, {delay: frameDelay});
+                }
+                
+                gif.on('finished', function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'zygnul-glitch.gif';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showStatus('animatedStatus', 'GIF saved!', 'success');
+                    btn.disabled = false;
+                    btn.textContent = '🎞️ Save as GIF';
+                });
+                
+                gif.render();
+                
+            } catch (err) {
+                console.error('GIF generation error:', err);
+                showStatus('animatedStatus', 'Failed to save GIF: ' + err.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '🎞️ Save as GIF';
+            }
+        });
+
+        document.getElementById('saveWebmBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('saveWebmBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Recording...';
+            
+            try {
+                const stream = animatedCanvas.captureStream(10);
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp9'
+                });
+                
+                const chunks = [];
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
+                
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'zygnul-glitch.webm';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showStatus('animatedStatus', 'WebM saved!', 'success');
+                    btn.disabled = false;
+                    btn.textContent = '📹 Save as WebM';
+                };
+                
+                mediaRecorder.onerror = (err) => {
+                    console.error('Recording error:', err);
+                    showStatus('animatedStatus', 'Failed to record', 'error');
+                    btn.disabled = false;
+                    btn.textContent = '📹 Save as WebM';
+                };
+                
+                mediaRecorder.start();
+                
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                }, 3000);
+                
+            } catch (err) {
+                console.error('WebM error:', err);
+                showStatus('animatedStatus', 'Failed to save WebM: ' + err.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '📹 Save as WebM';
+            }
+        });
+
+        function showStatus(elementId, message, type) {
+            const statusEl = document.getElementById(elementId);
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            
+            setTimeout(() => {
+                statusEl.classList.add('fade-out');
+                setTimeout(() => {
+                    statusEl.className = 'status';
+                }, 500);
+            }, 2000);
+        }
+
+        inputText.addEventListener('input', debouncedUpdateStaticOutput);
+
+        fontSizeSlider.addEventListener('input', (e) => {
+            document.getElementById('fontSizeValue').textContent = e.target.value;
+            debouncedUpdateStaticOutput();
+        });
+
+        intensitySlider.addEventListener('input', (e) => {
+            document.getElementById('intensityValue').textContent = e.target.value;
+            debouncedUpdateStaticOutput();
+        });
+
+        distributionSlider.addEventListener('input', (e) => {
+            document.getElementById('distributionValue').textContent = e.target.value;
+            debouncedUpdateStaticOutput();
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            document.getElementById('speedValue').textContent = e.target.value;
+        });
+
+        [zalgoUpCheck, zalgoDownCheck, zalgoMidCheck, mathSymbolsCheck, greekSymbolsCheck,
+         arabicSymbolsCheck, leetSpeakCheck, mirrorTextCheck, upsideDownCheck, paintModeCheck]
+            .forEach(checkbox => {
+                checkbox.addEventListener('change', updateStaticOutput);
+            });
+
+        [textGradientStartInput, textGradientEndInput, bgGradientStartInput, bgGradientEndInput]
+            .forEach(input => {
+                input.addEventListener('input', updateStaticOutput);
+            });
+
+        textEffectSelect.addEventListener('change', updateStaticOutput);
+        bgEffectSelect.addEventListener('change', updateStaticOutput);
+
+        updateStaticOutput();
+        startAnimation();
+
+        window.addEventListener('beforeunload', () => {
+            stopAnimation();
+        });
+    </script>
+</body>
+</html>
