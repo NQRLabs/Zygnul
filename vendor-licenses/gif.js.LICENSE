@@ -1,14 +1,4 @@
-# Third-Party Notices
-
-This project bundles the following third-party component. No other third-party code is included.
-
-## gif.js (v0.2.0)
-
-- Files: `/assets/js/vendor/gif.js`, `/assets/js/vendor/gif.worker.js`
-- Upstream repository: https://github.com/jnordberg/gif.js
-- Status: Unmodified copy of the upstream distribution.
-
-### License (MIT) — gif.js
+The MIT License (MIT)
 
 Copyright (c) 2013 Johan Nordberg
 
@@ -27,5 +17,5 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
